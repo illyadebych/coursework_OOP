@@ -1,0 +1,111 @@
+.content-area {
+  padding: 30px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: #1e1e1e;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: scale(1.03);
+}
+
+.card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.card h3 {
+  padding: 10px 12px 0;
+}
+
+.card p {
+  padding: 0 12px 12px;
+  opacity: 0.7;
+}
+
+.add-card {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.add-icon {
+  font-size: 40px;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: rgba(0,0,0,0.8);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #1e1e1e;
+  padding: 40px;
+  border-radius: 10px;
+
+  width: 420px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.modal-content input,
+.modal-content textarea {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.modal-buttons button {
+  padding: 10px;
+  border: none;
+  background: #3a7bfd;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.preview img {
+  width: 100%;
+  border-radius: 5px;
+}
+
+.preview button {
+  margin-top: 5px;
+  padding: 6px;
+  border: none;
+  background: red;
+  color: white;
+  border-radius: 4px;
+}
