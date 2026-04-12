@@ -19,6 +19,7 @@ function Home() {
 
   const fileInputRef = useRef();
 
+  // 1. Оголошуємо функцію завантаження (використовуємо useCallback для стабільності)
   const fetchItemsFromJava = useCallback(async (uid) => {
     try {
       const response = await fetch(`http://localhost:8080/api/items/user/${uid}`);
@@ -37,6 +38,7 @@ function Home() {
     }
   }, [categoryId]);
 
+  // 2. useEffect для відслідковування юзера та категорії
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);

@@ -17,6 +17,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/item/:id" element={<ItemPage />} />
+        
+        {/* Новий роут для категорій */}
         <Route path="/category/:id" element={<Home />} />
       </Routes>
     </Router>

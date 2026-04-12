@@ -1,0 +1,77 @@
+.nav {
+  height: 60px;
+  background: #111;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30px;
+}
+
+.nav-left,
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 18px;
+  color: white;
+}
+
+.nav-link {
+  color: #ccc;
+  transition: 0.2s;
+}
+
+.nav-link:hover {
+  color: white;
+}
+
+.user-area {
+  position: relative;
+}
+
+.avatar {
+  cursor: pointer;
+  font-size: 22px;
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 35px;
+  background: #222;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.dropdown button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.burger-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  margin-right: 15px;
+  padding: 5px;
+}
+
+.burger-menu span {
+  display: block;
+  width: 25px;
+  height: 3px;
+  background-color: white;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+
+.burger-menu:hover span {
+  background-color: #007bff; /* Колір при наведенні */
+}
