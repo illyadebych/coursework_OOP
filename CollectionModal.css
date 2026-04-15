@@ -1,82 +1,195 @@
+/* CollectionModal.css */
+
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Напівпрозорий чорний */
+    backdrop-filter: blur(8px); /* Ефект розмиття як на iOS */
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
 }
 
 .modal-content {
-  background: #1a1a1a;
-  padding: 30px;
-  border-radius: 15px;
-  width: 350px;
-  text-align: center;
-  color: white;
-  border: 1px solid #333;
+    background: #1c1c1e; /* Глибокий темно-сірий (колір карток Apple) */
+    padding: 35px;
+    border-radius: 20px; /* Більш круглі кути */
+    width: 400px; /* Трохи ширше для зручності */
+    text-align: center;
+    color: #ffffff; /* ЧІТКИЙ БІЛИЙ ТЕКСТ */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Тонка світла рамка */
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5); /* Глибока тінь */
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
 .coll-list {
-  margin: 20px 0;
-  max-height: 200px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+    margin: 20px 0;
+    max-height: 250px; /* Більше місця для списку */
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-right: 5px; /* Місце для скролбару */
 }
 
-.coll-item {
-  background: #333;
-  border: none;
-  color: white;
-  padding: 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.2s;
-  text-align: left;
+/* Кастомізація скролбару */
+.coll-list::-webkit-scrollbar {
+    width: 6px;
+}
+.coll-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+.coll-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
 }
 
-.coll-item:hover {
-  background: #444;
+.coll-item-btn {
+    background: rgba(255, 255, 255, 0.05); /* Напівпрозорий фон */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff; /* Чіткий текст */
+    padding: 14px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.coll-item-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(5px); /* Легкий зсув при наведенні */
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.empty-text {
+    color: #8e8e93; /* Приємний сірий для порожнього стану */
+    font-size: 15px;
+    margin: 20px 0;
 }
 
 .create-section {
-  margin-top: 20px;
-  border-top: 1px solid #333;
-  padding-top: 20px;
+    margin-top: 25px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 25px;
 }
 
-.add-coll-btn {
-  background: none;
-  border: 1px dashed #555;
-  color: #aaa;
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  cursor: pointer;
+.add-category-btn {
+    background: transparent;
+    border: 1.5px dashed rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
-.create-area input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  background: #222;
-  border: 1px solid #444;
-  color: white;
-  border-radius: 5px;
+.add-category-btn:hover {
+    border-color: #34c759; 
+    color: #34c759;
+    background: rgba(52, 199, 89, 0.05);
 }
 
-.close-btn-main {
-  margin-top: 20px;
-  background: #555;
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
+.create-area {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.folder-name-input {
+    width: 100%;
+    padding: 14px 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    border-radius: 12px;
+    font-size: 16px;
+    outline: none;
+    transition: 0.3s;
+    box-sizing: border-box;
+}
+
+.folder-name-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.folder-name-input:focus {
+    border-color: #3a7bfd; 
+    box-shadow: 0 0 15px rgba(58, 123, 253, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.modal-buttons.centered {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.modal-buttons button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.save-btn {
+    background: #34c759;
+    color: white;
+}
+
+.save-btn:hover {
+    background: #2ea84b;
+    box-shadow: 0 5px 15px rgba(52, 199, 89, 0.4);
+}
+
+.close-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-close-main {
+    margin-top: 25px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #8e8e93;
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+.modal-close-main:hover {
+    color: #ffffff;
+    border-color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
 }

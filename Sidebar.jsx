@@ -6,9 +6,11 @@ import "./Sidebar.css";
 
 function Sidebar({ isOpen, onClose }) {
   const [collections, setCollections] = useState([]);
-  const [view, setView] = useState("main"); // "main" або "collections"
+  const [view, setView] = useState("main");
+  const [currentUser, setCurrentUser] = useState(null); 
 
   const fetchCollections = useCallback(async (uid) => {
+    if (!uid) return;
     try {
       const res = await fetch(`http://localhost:8080/api/items/collections/user/${uid}`);
       if (res.ok) {
@@ -22,6 +24,7 @@ function Sidebar({ isOpen, onClose }) {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
+      setCurrentUser(u);
       if (u) {
         fetchCollections(u.uid);
       } else {
@@ -31,7 +34,20 @@ function Sidebar({ isOpen, onClose }) {
     return () => unsub();
   }, [fetchCollections]);
 
-  // Якщо меню закривається, повертаємо вигляд "main" через 300мс
+  useEffect(() => {
+    const handleNewFolder = () => {
+      if (currentUser) {
+        fetchCollections(currentUser.uid);
+      }
+    };
+
+    window.addEventListener("folderCreated", handleNewFolder);
+
+    return () => {
+      window.removeEventListener("folderCreated", handleNewFolder);
+    };
+  }, [currentUser, fetchCollections]);
+
   useEffect(() => {
     if (!isOpen) {
       const timer = setTimeout(() => setView("main"), 300);
@@ -41,10 +57,8 @@ function Sidebar({ isOpen, onClose }) {
 
   return (
     <>
-      {/* ФОН (закриває при кліку на порожнечу) */}
       {isOpen && <div className="sidebar-overlay" onClick={onClose}></div>}
       
-      {/* САМА ПАНЕЛЬ */}
       <div className={`sidebar ${isOpen ? "open" : ""}`}>
         
         {view === "main" ? (

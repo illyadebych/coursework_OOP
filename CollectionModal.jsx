@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import "./CollectionModal.css";
 
 function CollectionModal({ userId, onSelect, onClose }) {
@@ -6,8 +6,8 @@ function CollectionModal({ userId, onSelect, onClose }) {
   const [newName, setNewName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
 
-  // 1. Спочатку оголошуємо функцію
-  const fetchCollections = async () => {
+  const fetchCollections = useCallback(async () => {
+    if (!userId) return;
     try {
       const res = await fetch(`http://localhost:8080/api/items/collections/user/${userId}`);
       if (res.ok) {
@@ -17,26 +17,33 @@ function CollectionModal({ userId, onSelect, onClose }) {
     } catch (err) {
       console.error("Помилка завантаження колекцій", err);
     }
-  };
-
-  // 2. Потім викликаємо її в useEffect
-  useEffect(() => {
-    fetchCollections();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
+  useEffect(() => {
+    const initLoad = async () => {
+      await fetchCollections();
+    };
+    initLoad();
+  }, [fetchCollections]);
+
   const handleCreate = async () => {
-    if (!newName) return;
+    if (!newName) return alert("Введіть назву!");
     try {
       const res = await fetch("http://localhost:8080/api/items/collections", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newName, userId: userId })
+        body: JSON.stringify({ name: newName, userId: userId, isPublic: false })
       });
+      
       if (res.ok) {
         setNewName("");
         setIsCreating(false);
-        fetchCollections();
+        await fetchCollections(); 
+        
+        // СИГНАЛ ДЛЯ САЙДБАРУ, ЩОБ ВІН ОНОВИВСЯ
+        window.dispatchEvent(new Event('folderCreated'));
+      } else {
+        alert("Помилка: сервер не зберіг папку");
       }
     } catch (err) {
       console.error("Помилка створення", err);
@@ -45,39 +52,43 @@ function CollectionModal({ userId, onSelect, onClose }) {
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content">
+      <div className="modal-content settings-card">
         <h3>Виберіть категорію</h3>
         
         <div className="coll-list">
-          {collections.length === 0 && <p style={{color: "#888"}}>Папок поки немає</p>}
+          {collections.length === 0 && <p className="empty-text">Папок поки немає</p>}
           {collections.map(c => (
-            <button key={c.id} onClick={() => onSelect(c.id)} className="coll-item">
+            <button 
+              key={c.id} 
+              onClick={() => onSelect(c.id)} 
+              className="coll-item-btn"
+            >
               📁 {c.name}
             </button>
           ))}
         </div>
 
-        <div className="create-section">
-          {isCreating ? (
-            <div className="create-area">
-              <input 
-                value={newName} 
-                onChange={e => setNewName(e.target.value)} 
-                placeholder="Назва папки..." 
-              />
-              <div className="modal-buttons">
-                <button onClick={handleCreate}>Ок</button>
-                <button onClick={() => setIsCreating(false)}>Скасувати</button>
-              </div>
+        {isCreating ? (
+          <div className="create-area">
+            <input 
+              value={newName} 
+              onChange={e => setNewName(e.target.value)} 
+              placeholder="Назва папки..." 
+              className="folder-name-input"
+              autoFocus
+            />
+            <div className="modal-buttons centered">
+              <button className="save-btn" onClick={handleCreate}>Ок</button>
+              <button className="close-btn" onClick={() => setIsCreating(false)}>Скасувати</button>
             </div>
-          ) : (
-            <button className="add-coll-btn" onClick={() => setIsCreating(true)}>
-              + Створити нову категорію
-            </button>
-          )}
-        </div>
+          </div>
+        ) : (
+          <button className="add-category-btn" onClick={() => setIsCreating(true)}>
+            + Створити нову категорію
+          </button>
+        )}
         
-        <button className="close-btn-main" onClick={onClose}>Закрити</button>
+        <button className="modal-close-main" onClick={onClose}>Закрити</button>
       </div>
     </div>
   );

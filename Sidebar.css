@@ -1,10 +1,10 @@
 .sidebar {
   position: fixed;
   top: 0;
-  left: -300px; /* Початкова позиція за екраном */
+  left: -300px;
   width: 280px;
   height: 100vh;
-  background: #111; /* ТЕМНИЙ ФОН */
+  background: #111; 
   color: white;
   transition: 0.3s ease-in-out;
   z-index: 1000;
@@ -13,7 +13,7 @@
 }
 
 .sidebar.open {
-  left: 0; /* Виїжджає при відкритті */
+  left: 0;
 }
 
 .sidebar-overlay {
