@@ -1,5 +1,7 @@
 package com.example.backend;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,8 +21,10 @@ public class CollectionEntity {
     private Long id;
     
     private String name;    
-    private String userId;
+    private String userId;      // Тут залишається довгий ID від Firebase
+    private String authorName;  // НОВЕ: Тут буде красивий Нікнейм
     
     @Column(columnDefinition = "boolean default false")
+    @JsonProperty("isPublic") 
     private boolean isPublic = false; 
 }
