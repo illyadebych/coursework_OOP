@@ -1,18 +1,23 @@
 .login-page {
-  min-height: calc(100vh - 60px); 
+  min-height: calc(100vh - 60px); /* висота без Navbar */
   display: flex;
   justify-content: center;
   align-items: center;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
 
 .login-box {
-  background: #1e1e1e;
   padding: 40px;
   border-radius: 12px;
   width: 320px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  background-color: rgba(41, 40, 40, 0.6) !important; 
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border: 1px solid rgba(255, 255, 255, 0.116);
 }
 
 .login-box h1 {
@@ -30,7 +35,7 @@
 
 .login-box input:focus {
   outline: none;
-  border-color: #646cff;
+  border-color: #7e84f6;
 }
 
 .login-box button {

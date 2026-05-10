@@ -193,3 +193,12 @@
     border-color: #ffffff;
     background: rgba(255, 255, 255, 0.05);
 }
+
+.modal-buttons {
+    flex-direction: column; /* Кнопки стануть одна під одною */
+    gap: 10px;
+    width: 100%;
+}
+.modal-buttons button {
+    width: 100%; /* Кнопки на всю ширину */
+}

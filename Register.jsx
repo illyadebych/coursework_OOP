@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"; // Додано updateProfile
 import { auth } from "../../firebase";
 import { Link, useNavigate } from "react-router-dom";
-import "./Register.css";
+import "./Register.css"; // Твій порожній або спільний CSS, він підтягне стилі логіну
 
 function Register() {
+  const [username, setUsername] = useState(""); // ДОДАНО: Стан для імені
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
@@ -13,16 +14,29 @@ function Register() {
   const navigate = useNavigate();
 
   const handleRegister = async () => {
+    // Перевірки перед відправкою
+    if (!username.trim()) {
+      setError("Будь ласка, введіть ім'я користувача");
+      return;
+    }
     if (password !== repeatPassword) {
       setError("Паролі не співпадають");
       return;
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      navigate("/"); // на Home після реєстрації
+      // 1. Створюємо користувача в Firebase
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      
+      // 2. Одразу записуємо його Нікнейм у профіль Firebase
+      await updateProfile(userCredential.user, {
+        displayName: username
+      });
+
+      // Якщо все успішно — кидаємо на головну
+      navigate("/"); 
     } catch (err) {
-      setError(err.message);
+      setError("Помилка реєстрації: " + err.message);
     }
   };
 
@@ -30,6 +44,14 @@ function Register() {
     <div className="login-page">
       <div className="login-box">
         <h1>Register</h1>
+
+        {/* НОВЕ ПОЛЕ ДЛЯ ІМЕНІ */}
+        <input
+          type="text"
+          placeholder="Username (Нікнейм)"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
 
         <input
           type="email"
@@ -52,7 +74,7 @@ function Register() {
           onChange={(e) => setRepeatPassword(e.target.value)}
         />
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p style={{ color: "#ff3b30", fontSize: "14px", margin: "5px 0" }}>{error}</p>}
 
         <button onClick={handleRegister}>Register</button>
 

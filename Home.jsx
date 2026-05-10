@@ -25,9 +25,10 @@ function Home() {
   const [isPublic, setIsPublic] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
 
+  const [showWelcome, setShowWelcome] = useState(false);
+
   const fileInputRef = useRef();
 
-  // Завантаження даних папки
   useEffect(() => {
     if (!categoryId) return;
     (async () => {
@@ -49,10 +50,20 @@ function Home() {
       const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
+        
+        // ОНОВЛЕННЯ: Якщо ми на головній, зберігаємо загальну кількість
+        if (!categoryId && !searchTerm) {
+          localStorage.setItem("totalItemsCount", data.length);
+          // Створюємо подію, щоб сайдбар дізнався про зміни
+          window.dispatchEvent(new Event("storageUpdate"));
+        }
+
         if (categoryId) {
           const filtered = data.filter(item => String(item.collectionId) === String(categoryId));
           setItems(filtered);
-        } else { setItems(data); }
+        } else { 
+          setItems(data); 
+        }
       }
     } catch { console.error("Помилка сервера"); }
   }, [categoryId, searchTerm]);
@@ -60,11 +71,23 @@ function Home() {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      if (currentUser) fetchItemsFromJava(currentUser.uid);
-      else setItems([]);
+      if (currentUser) {
+        fetchItemsFromJava(currentUser.uid);
+        const hasSeenWelcome = localStorage.getItem(`hasSeenWelcome_${currentUser.uid}`);
+        if (!hasSeenWelcome && !categoryId) {
+          setShowWelcome(true);
+        }
+      } else setItems([]);
     });
     return () => unsub();
-  }, [fetchItemsFromJava]);
+  }, [fetchItemsFromJava, categoryId]);
+
+  const handleCloseWelcome = () => {
+    if (user) {
+      localStorage.setItem(`hasSeenWelcome_${user.uid}`, "true");
+    }
+    setShowWelcome(false);
+  };
 
   const handleFinalAdd = async (selectedCollId) => {
     const newItem = {
@@ -85,6 +108,12 @@ function Home() {
       if (response.ok) {
         const savedItem = await response.json();
         setItems([...items, savedItem]);
+        
+        // Оновлюємо лічильник після додавання
+        const currentCount = parseInt(localStorage.getItem("totalItemsCount") || 0);
+        localStorage.setItem("totalItemsCount", currentCount + 1);
+        window.dispatchEvent(new Event("storageUpdate"));
+
         setTitle(""); setDesc(""); setFileImage(null); 
         setShowCollectionModal(false);
         setShowForm(false);
@@ -97,7 +126,12 @@ function Home() {
       const res = await fetch(`http://localhost:8080/api/items/collections/${categoryId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: folderName, isPublic: isPublic, userId: user?.uid })
+        body: JSON.stringify({ 
+          name: folderName, 
+          isPublic: isPublic, 
+          userId: user?.uid,
+          authorName: user?.displayName || user?.email?.split('@')[0] || "Користувач"
+        })
       });
       if (res.ok) {
         setCurrentFolderTitle(folderName); 
@@ -139,23 +173,81 @@ function Home() {
         ))}
       </div>
 
+      {showWelcome && (
+        <div className="modal-overlay" style={{ zIndex: 9999 }}>
+          <div className="modal-content settings-card welcome-modal-content">
+            <h2 className="welcome-title">Вітаємо!</h2>
+            <p className="welcome-text">
+              Ви знаходитеся на сторінці, де ви можете додати свій колекційний предмет.
+            </p>
+            <p className="welcome-text">
+              Щоб додати свій перший колекційний предмет, натисніть на блок <br/> <b>+ Додати елемент</b>.
+            </p>
+            <button className="welcome-btn" onClick={handleCloseWelcome}>
+              Зрозуміло
+            </button>
+          </div>
+        </div>
+      )}
+
       {showForm && (
         <div className="modal">
-          <div className="modal-content settings-card">
+          <div className="modal-content settings-card modern-modal">
             <h2>Новий елемент</h2>
-            <input type="file" ref={fileInputRef} onChange={(e) => {
-               const reader = new FileReader();
-               reader.onload = () => setFileImage(reader.result);
-               reader.readAsDataURL(e.target.files[0]);
-            }} />
-            <input placeholder="Назва" value={title} onChange={(e) => setTitle(e.target.value)} />
-            <textarea placeholder="Опис" value={desc} onChange={(e) => setDesc(e.target.value)} />
+            
+            <div className="file-upload-section">
+              <label className="custom-file-upload">
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  capture="environment" 
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = () => setFileImage(reader.result);
+                      reader.readAsDataURL(file);
+                    }
+                  }} 
+                />
+                <div className="upload-content">
+                  {fileImage ? (
+                    <img src={fileImage} alt="Preview" className="upload-preview" />
+                  ) : (
+                    <>
+                      <span className="upload-icon">📷</span>
+                      <span className="upload-text">Зробити фото або вибрати файл</span>
+                    </>
+                  )}
+                </div>
+              </label>
+            </div>
+
+            <div className="input-group">
+              <input 
+                placeholder="Назва" 
+                className="modern-input"
+                value={title} 
+                onChange={(e) => setTitle(e.target.value)} 
+              />
+              <textarea 
+                placeholder="Опис" 
+                className="modern-textarea"
+                value={desc} 
+                onChange={(e) => setDesc(e.target.value)} 
+                rows="4"
+              />
+            </div>
+
             <div className="modal-buttons centered">
-              <button className="save-btn" onClick={() => {
+              <button className="save-btn action-save" onClick={() => {
                 if (categoryId) handleFinalAdd(Number(categoryId)); 
                 else setShowCollectionModal(true); 
               }}>Зберегти</button>
-              <button className="close-btn" onClick={() => setShowForm(false)}>Закрити</button>
+              <button className="close-btn action-close" onClick={() => {
+                setShowForm(false);
+                setFileImage(null);
+              }}>Закрити</button>
             </div>
           </div>
         </div>

@@ -7,7 +7,7 @@ import "./Sidebar.css";
 function Sidebar({ isOpen, onClose }) {
   const [collections, setCollections] = useState([]);
   const [view, setView] = useState("main");
-  const [currentUser, setCurrentUser] = useState(null); 
+  const [totalItems, setTotalItems] = useState(0);
 
   const fetchCollections = useCallback(async (uid) => {
     if (!uid) return;
@@ -24,9 +24,9 @@ function Sidebar({ isOpen, onClose }) {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
-      setCurrentUser(u);
       if (u) {
         fetchCollections(u.uid);
+        setTotalItems(parseInt(localStorage.getItem("totalItemsCount") || 0));
       } else {
         setCollections([]);
       }
@@ -35,18 +35,12 @@ function Sidebar({ isOpen, onClose }) {
   }, [fetchCollections]);
 
   useEffect(() => {
-    const handleNewFolder = () => {
-      if (currentUser) {
-        fetchCollections(currentUser.uid);
-      }
+    const handleUpdate = () => {
+      setTotalItems(parseInt(localStorage.getItem("totalItemsCount") || 0));
     };
-
-    window.addEventListener("folderCreated", handleNewFolder);
-
-    return () => {
-      window.removeEventListener("folderCreated", handleNewFolder);
-    };
-  }, [currentUser, fetchCollections]);
+    window.addEventListener("storageUpdate", handleUpdate);
+    return () => window.removeEventListener("storageUpdate", handleUpdate);
+  }, []);
 
   useEffect(() => {
     if (!isOpen) {
@@ -60,39 +54,54 @@ function Sidebar({ isOpen, onClose }) {
       {isOpen && <div className="sidebar-overlay" onClick={onClose}></div>}
       
       <div className={`sidebar ${isOpen ? "open" : ""}`}>
-        
         {view === "main" ? (
-          <div className="sidebar-inner">
-            <div className="sidebar-header">
-              <h3>Меню</h3>
-              <button className="close-btn" onClick={onClose}>×</button>
-            </div>
-            <div className="sidebar-content">
-              <Link to="/" onClick={onClose} className="sidebar-item">
-                Всі предмети
-              </Link>
-              <div className="sidebar-item clickable" onClick={() => setView("collections")}>
-                Категорії
+          <div className="sidebar-inner-flex">
+            <div className="sidebar-top-section">
+              <div className="sidebar-header">
+                <h3>Меню</h3>
+                <button className="close-btn" onClick={onClose}>×</button>
               </div>
+              
+              <div className="sidebar-content">
+                <div className="sidebar-group-label">ОСНОВНЕ</div>
+                <div className="sidebar-item clickable" onClick={() => setView("collections")}>
+                  📁 Категорії
+                </div>
+                
+                <div className="sidebar-group-label">ВАША СТАТИСТИКА</div>
+                <div className="sidebar-stats-card">
+                  <div className="stats-row">
+                    <span>Елементів:</span>
+                    <span className="stats-value">{totalItems}</span>
+                  </div>
+                  <div className="stats-row">
+                    <span>Папок:</span>
+                    <span className="stats-value">{collections.length}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Футер з пасхалкою */}
+            <div className="sidebar-footer">
+              <Link to="/about" onClick={onClose} className="sidebar-about-link">
+                Про проєкт
+              </Link>
             </div>
           </div>
         ) : (
-          <div className="sidebar-inner">
+          <div className="sidebar-inner-flex">
             <div className="sidebar-header">
               <button className="back-btn" onClick={() => setView("main")}>←</button>
-              <h3>Мої категорії</h3>
+              <h3>Категорії</h3>
               <button className="close-btn" onClick={onClose}>×</button>
             </div>
-            <div className="sidebar-content">
-              {collections.length === 0 ? (
-                <p style={{padding: "20px", color: "#666"}}>Папок поки немає</p>
-              ) : (
-                collections.map(c => (
-                  <Link key={c.id} to={`/category/${c.id}`} onClick={onClose} className="sidebar-item">
-                    📂 {c.name}
-                  </Link>
-                ))
-              )}
+            <div className="sidebar-content nested-scroll">
+              {collections.map(c => (
+                <Link key={c.id} to={`/category/${c.id}`} onClick={onClose} className="sidebar-item">
+                  📂 {c.name}
+                </Link>
+              ))}
             </div>
           </div>
         )}

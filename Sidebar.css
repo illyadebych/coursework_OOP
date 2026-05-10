@@ -1,19 +1,21 @@
 .sidebar {
   position: fixed;
   top: 0;
-  left: -300px;
+  left: -320px; 
   width: 280px;
-  height: 100vh;
+  height: 100dvh; 
   background: #111; 
   color: white;
-  transition: 0.3s ease-in-out;
-  z-index: 1000;
-  padding: 20px;
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 2000;
+  padding: 25px 20px calc(40px + env(safe-area-inset-bottom)) 20px;
   box-shadow: 2px 0 15px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar.open {
-  left: 0;
+  left: 0 !important;
 }
 
 .sidebar-overlay {
@@ -22,21 +24,139 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0,0,0,0.7);
-  z-index: 999;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(4px);
+  z-index: 1999;
+}
+
+.sidebar-inner-flex {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.sidebar-top-section {
+  flex: 1; 
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.sidebar-header h3 {
+  font-size: 22px;
+  margin: 0;
+}
+
+.sidebar-group-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: #444; 
+  letter-spacing: 1.5px;
+  margin: 25px 0 10px 5px;
+  text-transform: uppercase;
 }
 
 .sidebar-item {
-  display: block;
-  padding: 15px;
-  color: #ccc;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 15px;
+  color: #bbb;
   text-decoration: none;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 12px;
+  transition: 0.2s;
 }
 
 .sidebar-item:hover {
-  background: #222;
+  background: rgba(255, 255, 255, 0.05);
   color: white;
+}
+
+.sidebar-stats-card {
+  background: #161616;
+  border: 1px solid #222;
+  border-radius: 16px;
+  padding: 18px;
+  margin-top: 10px;
+}
+
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #888;
+}
+
+.stats-row:last-child {
+  margin-bottom: 0;
+}
+
+.stats-value {
+  color: #0a84ff;
+  font-weight: 700;
+}
+
+/* ФУТЕР (ПАСХАЛКА) */
+.sidebar-footer {
+  margin-top: auto; 
+  margin-bottom: 60px; /* ПІДНЯТО ДЛЯ АЙФОНА */
+  display: flex;
+  justify-content: flex-start;
+}
+
+.sidebar-about-link {
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 12px;
+  opacity: 0.06; 
+  filter: blur(0.4px);
+  transition: all 0.5s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px;
+}
+
+.sidebar-about-link:hover {
+  opacity: 0.8;
+  filter: blur(0);
+  transform: translateY(-2px);
+  color: #0a84ff;
+}
+
+.close-btn, .back-btn {
+  background: #222;
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.close-btn:hover {
+  background: #ff453a;
+}
+
+.nested-scroll {
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 80%;
+    left: -100%;
+  }
 }

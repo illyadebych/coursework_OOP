@@ -15,6 +15,9 @@ function ItemPage() {
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [showModal, setShowModal] = useState(false);
+  
+  // НОВИЙ СТАН ДЛЯ МОДАЛКИ ВИДАЛЕННЯ
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => setUser(u));
@@ -38,12 +41,17 @@ function ItemPage() {
     loadData();
   }, [id]);
 
-  const handleDelete = async () => {
-    if (window.confirm("Ти точно хочеш видалити цей елемент?")) {
-      try {
-        const res = await fetch(`http://localhost:8080/api/items/${id}`, { method: "DELETE" });
-        if (res.ok) { navigate("/"); }
-      } catch { alert("Помилка при видаленні"); }
+  // ВИКЛИКАЄТЬСЯ ПІСЛЯ ПІДТВЕРДЖЕННЯ У ВЛАСНІЙ МОДАЛЦІ
+  const confirmDelete = async () => {
+    try {
+      const res = await fetch(`http://localhost:8080/api/items/${id}`, { method: "DELETE" });
+      if (res.ok) { 
+        navigate("/"); 
+      }
+    } catch { 
+      alert("Помилка при видаленні"); 
+    } finally {
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -81,39 +89,61 @@ function ItemPage() {
   if (!item) return <h2 style={{color: "white", textAlign: "center", marginTop: "50px"}}>Завантаження...</h2>;
 
   return (
-    <div className="item-page">
-      <div className="item-container">
-        <img src={item.image} alt={item.title} />
-        {edit ? (
-          <div className="edit-box">
-            <input value={title} onChange={(e) => setTitle(e.target.value)} />
-            <textarea value={desc} onChange={(e) => setDesc(e.target.value)} rows="6" />
-            <button className="save-btn" onClick={handleSave}>Зберегти</button>
+    <div className="item-details-container">
+      <button className="back-button" onClick={() => navigate(-1)}>
+        ← Назад
+      </button>
+
+      <div className="item-page">
+        <div className="item-container">
+          <img src={item.image} alt={item.title} />
+          {edit ? (
+            <div className="edit-box">
+              <input value={title} onChange={(e) => setTitle(e.target.value)} />
+              <textarea value={desc} onChange={(e) => setDesc(e.target.value)} rows="6" />
+              <button className="save-btn" onClick={handleSave}>Зберегти</button>
+            </div>
+          ) : (
+            <div className="view-box">
+              <h1>{item.title}</h1>
+              <p>{item.descr}</p>
+            </div>
+          )}
+          <div className="actions">
+            <button className="edit-btn" onClick={() => setEdit(!edit)}>
+              {edit ? "Скасувати" : "Редагувати"}
+            </button>
+            
+            {/* ВІДКРИВАЄМО НАШУ МОДАЛКУ ЗАМІСТЬ WINDOW.CONFIRM */}
+            <button className="delete-btn" onClick={() => setShowDeleteConfirm(true)}>Видалити</button>
+            
+            <button className="coll-btn" onClick={() => setShowModal(true)}>
+              Додати в категорію
+            </button>
           </div>
-        ) : (
-          <div className="view-box">
-            <h1>{item.title}</h1>
-            <p>{item.descr}</p>
-          </div>
-        )}
-        <div className="actions">
-          {/* ТУТ МИ ДОДАЛИ className="edit-btn" */}
-          <button 
-            className="edit-btn" 
-            onClick={() => setEdit(!edit)}
-          >
-            {edit ? "Cancel" : "Редагувати"}
-          </button>
-          
-          <button className="delete-btn" onClick={handleDelete}>Видалити</button>
-          
-          <button className="coll-btn" onClick={() => setShowModal(true)}>
-            Додати в категорію
-          </button>
         </div>
       </div>
+
+      {/* КУСТОМНА МОДАЛКА ВИДАЛЕННЯ (ВШИТА В КОД) */}
+      {showDeleteConfirm && (
+        <div className="custom-modal-overlay">
+          <div className="custom-confirm-box">
+            <h3>Підтвердження</h3>
+            <p>Ти точно хочеш видалити цей елемент?</p>
+            <div className="custom-modal-actions">
+              <button className="c-cancel-btn" onClick={() => setShowDeleteConfirm(false)}>Скасувати</button>
+              <button className="c-confirm-btn" onClick={confirmDelete}>Видалити</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showModal && user && (
-        <CollectionModal userId={user.uid} onSelect={addToCollection} onClose={() => setShowModal(false)} />
+        <CollectionModal 
+          userId={user.uid} 
+          onSelect={addToCollection} 
+          onClose={() => setShowModal(false)} 
+        />
       )}
     </div>
   );

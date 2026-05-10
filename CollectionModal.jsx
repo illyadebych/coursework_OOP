@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { auth } from "../../firebase"; 
 import "./CollectionModal.css";
 
 function CollectionModal({ userId, onSelect, onClose }) {
@@ -28,11 +29,19 @@ function CollectionModal({ userId, onSelect, onClose }) {
 
   const handleCreate = async () => {
     if (!newName) return alert("Введіть назву!");
+    
+    const currentUser = auth.currentUser;
+
     try {
       const res = await fetch("http://localhost:8080/api/items/collections", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newName, userId: userId, isPublic: false })
+        body: JSON.stringify({ 
+          name: newName, 
+          userId: userId, 
+          isPublic: false,
+          authorName: currentUser?.displayName || currentUser?.email?.split('@')[0] || "Користувач"
+        })
       });
       
       if (res.ok) {
@@ -40,7 +49,6 @@ function CollectionModal({ userId, onSelect, onClose }) {
         setIsCreating(false);
         await fetchCollections(); 
         
-        // СИГНАЛ ДЛЯ САЙДБАРУ, ЩОБ ВІН ОНОВИВСЯ
         window.dispatchEvent(new Event('folderCreated'));
       } else {
         alert("Помилка: сервер не зберіг папку");
@@ -88,7 +96,25 @@ function CollectionModal({ userId, onSelect, onClose }) {
           </button>
         )}
         
-        <button className="modal-close-main" onClick={onClose}>Закрити</button>
+        {/* --- НОВИЙ БЛОК З КНОПКАМИ --- */}
+        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '20px' }}>
+          
+          {/* Ця кнопка зберігає елемент БЕЗ категорії */}
+          <button className="modal-close-main" onClick={() => onSelect(null)}>
+            Не додавати
+          </button>
+
+          {/* Ця кнопка повністю скасовує дію (закриває модалку без збереження) */}
+          <button 
+            className="modal-close-main" 
+            style={{ background: 'transparent', border: '1px solid #666', color: '#ccc' }} 
+            onClick={onClose}
+          >
+            Скасувати
+          </button>
+
+        </div>
+
       </div>
     </div>
   );

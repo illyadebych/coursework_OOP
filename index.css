@@ -1,3 +1,4 @@
+/* src/index.css */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -16,8 +17,23 @@
 body {
   margin: 0;
   min-width: 320px;
-  min-height: 100vh;
   background-color: black; 
+}
+
+/* МАГІЯ ВІД СТРИБКІВ ФОНУ В SAFARI */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  background-color: black;
+  /* Якщо в тебе були зорі картинкою, розкоментуй і додай сюди: */
+  /* background-image: url('твій-фон.png'); */
+  background-size: cover;
+  background-position: center;
 }
 
 a {

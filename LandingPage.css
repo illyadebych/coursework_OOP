@@ -1,0 +1,161 @@
+.landing-wrapper {
+  position: relative;
+  min-height: 100vh;
+  
+  /* Робимо темну плівку трохи прозорішою, щоб космос краще просвічувався */
+  background-color: rgba(0, 0, 0, 0.2); 
+  
+  /* МАГІЯ ТУТ: Зменшуємо блюр до 8px! Тепер зірки будуть виглядати як красиві розмиті світлячки, а не просто зникнуть */
+  backdrop-filter: blur(4px); 
+  -webkit-backdrop-filter: blur(4px);
+  
+  color: #ffffff;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+/* --- МАГІЧНІ ЗАСВІТИ НА ФОНІ --- */
+.glow-circle {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(10, 132, 255, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.top-left { top: -150px; left: -150px; }
+.bottom-right { bottom: -150px; right: -150px; background: radial-gradient(circle, rgba(52, 199, 89, 0.1) 0%, rgba(0, 0, 0, 0) 70%); }
+
+/* --- КОНТЕНТ --- */
+.landing-content {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 30px;
+}
+
+.landing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 0;
+}
+
+.landing-logo {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.nav-login-btn {
+  color: #e5e5ea;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-login-btn:hover { color: #ffffff; }
+
+/* --- ГОЛОВНИЙ БЛОК --- */
+.landing-main {
+  text-align: center;
+  padding: 80px 0 100px;
+}
+
+.hero-title {
+  font-size: 72px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 24px;
+  letter-spacing: -2px;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #0a84ff 0%, #30d158 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+  font-size: 20px;
+  color: #8e8e93;
+  max-width: 600px;
+  margin: 0 auto 40px;
+  line-height: 1.5;
+}
+
+.hero-actions {
+  margin-bottom: 80px;
+}
+
+.btn-primary-large {
+  display: inline-block;
+  background: #ffffff;
+  color: #000000;
+  padding: 16px 36px;
+  border-radius: 30px;
+  font-size: 18px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary-large:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+}
+
+/* --- ФІЧІ (КАРТКИ) --- */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  text-align: left;
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 40px 30px;
+  border-radius: 24px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: transform 0.3s, background 0.3s;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.feature-icon {
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+
+.feature-card h3 {
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.feature-card p {
+  color: #8e8e93;
+  line-height: 1.5;
+  font-size: 15px;
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 36px; /* Замість 72px */
+    letter-spacing: -1px;
+  }
+  .hero-subtitle {
+    font-size: 16px;
+    padding: 0 10px;
+  }
+  .features-grid {
+    grid-template-columns: 1fr; /* Картки фіч одна під одною */
+  }
+}

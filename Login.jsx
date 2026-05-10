@@ -18,7 +18,6 @@ function Login() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      alert("Ви успішно увійшли");
       navigate("/");
     } catch (error) {
       alert("Помилка входу: " + error.message);
